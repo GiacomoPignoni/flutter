@@ -246,3 +246,69 @@ class SkwasmSurface implements OffscreenSurface {
     throw StateError('rasterizeToCanvas is not supported for SkwasmSurface');
   }
 }
+
+class SkwasmRenderSurface implements ui.RenderSurface {
+  SkwasmRenderSurface(this.texture, this.width, this.height);
+
+  @override
+  int height;
+  @override
+  Object texture;
+  @override
+  int width;
+
+  DomImageBitmap? _lastRenderedImageBitmap;
+
+  static Future<ui.RenderSurface> fromTexture(Object textureId, int width, int height) async {
+    // Setup is run via createDefault in the parent constructor
+    return SkwasmRenderSurface(textureId, width, height);
+  }
+
+  @override
+  Future<Object> toBytes(ByteBuffer buffer) async {
+    if (_lastRenderedImageBitmap == null) {
+      throw StateError('No image to rasterize');
+    }
+    return _lastRenderedImageBitmap!;
+  }
+
+  @override
+  ui.Image? makeImageSnapshotFromSource(Object src) {
+    final _VideoFrame videoFrame = _VideoFrame(src as JSObject);
+    final skwamRenderer = renderer as SkwasmRenderer;
+    final surface = skwamRenderer.pictureToImageSurface as SkwasmSurface;
+
+    return SkwasmImage(
+      imageCreateFromTextureSource(
+        videoFrame as JSObject,
+        width,
+        height,
+        surface.handle,
+      ),
+    );
+  }
+
+  Future<void> renderPicture(SkwasmPicture picture) async {
+    if (_lastRenderedImageBitmap != null) {
+      _lastRenderedImageBitmap!.close();
+    }
+
+    final skwamRenderer = renderer as SkwasmRenderer;
+    final surface = skwamRenderer.pictureToImageSurface as SkwasmSurface;
+    final DomImageBitmap bitmap  = (await surface.rasterizeToImageBitmaps(
+      <SkwasmPicture>[picture],
+    )).single;
+    _lastRenderedImageBitmap = bitmap;
+  }
+
+  @override
+  Future<void> dispose() async {
+    _lastRenderedImageBitmap?.close();
+  }
+}
+
+@JS('VideoFrame')
+@staticInterop
+extension type _VideoFrame._(JSObject _) implements DomCanvasImageSource {
+  external factory _VideoFrame(JSAny source);
+}

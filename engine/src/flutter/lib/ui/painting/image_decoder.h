@@ -56,6 +56,7 @@ class ImageDecoder {
   // callback is guaranteed to return on the UI thread.
   virtual void Decode(fml::RefPtr<ImageDescriptor> descriptor,
                       const Options& options,
+                      bool mipmapped,
                       const ImageResult& result) = 0;
 
   fml::TaskRunnerAffineWeakPtr<ImageDecoder> GetWeakPtr() const;

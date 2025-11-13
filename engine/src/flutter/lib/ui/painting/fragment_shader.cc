@@ -11,6 +11,8 @@
 #include "flutter/display_list/effects/dl_color_source.h"
 #include "flutter/lib/ui/painting/fragment_program.h"
 #include "flutter/lib/ui/painting/image_filter.h"
+#include "flutter/lib/ui/ui_dart_state.h"
+#include "third_party/skia/include/core/SkString.h"
 #include "third_party/tonic/converter/dart_converter.h"
 
 namespace flutter {

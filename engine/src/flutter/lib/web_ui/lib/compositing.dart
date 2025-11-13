@@ -5,7 +5,9 @@
 part of ui;
 
 abstract class Scene {
+  Future<void> renderToSurface(RenderSurface renderSurface, {bool flipVertical = false});
   Future<Image> toImage(int width, int height);
+  Future<Object?> toCanvas(int width, int height);
   Image toImageSync(int width, int height);
   void dispose();
 }

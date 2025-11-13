@@ -66,6 +66,12 @@ class SnapshotController {
 
   virtual bool MakeRenderContextCurrent() = 0;
 
+  virtual sk_sp<DlImage> MakeFromTexture(int64_t raw_texture, DlISize size) = 0;
+
+  virtual std::unique_ptr<Surface> MakeOffscreenSurface(
+      int64_t raw_texture,
+      const DlISize& size) = 0;
+
  protected:
   explicit SnapshotController(const Delegate& delegate);
   const Delegate& GetDelegate() { return delegate_; }

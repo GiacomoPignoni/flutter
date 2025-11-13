@@ -24,6 +24,7 @@ class ImageDecoderSkia final : public ImageDecoder {
   // |ImageDecoder|
   void Decode(fml::RefPtr<ImageDescriptor> descriptor,
               const Options& options,
+              bool mipmapped,
               const ImageResult& result) override;
 
   static sk_sp<SkImage> ImageFromCompressedData(

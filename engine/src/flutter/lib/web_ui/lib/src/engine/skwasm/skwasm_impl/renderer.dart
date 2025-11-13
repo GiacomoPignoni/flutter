@@ -337,6 +337,7 @@ class SkwasmRenderer extends Renderer {
     int? targetWidth,
     int? targetHeight,
     bool allowUpscaling = true,
+    bool mipmapped = true,
   }) async {
     final ImageType? contentType = detectImageType(list);
     if (contentType == null) {
@@ -542,4 +543,8 @@ class SkwasmRenderer extends Renderer {
 
   @override
   Surface get pictureToImageSurface => (rasterizer as OffscreenCanvasRasterizer).offscreenSurface;
+
+  ui.RenderSurface createRenderSurface(Object textureId, int width, int height) {
+    return SkwasmRenderSurface(textureId, width, height);
+  }
 }
