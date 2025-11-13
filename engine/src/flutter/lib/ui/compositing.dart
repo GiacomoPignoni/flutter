@@ -3,6 +3,9 @@
 // found in the LICENSE file.
 part of dart.ui;
 
+@pragma('vm:entry-point')
+class RendererBackgroundException {}
+
 /// An opaque object representing a composited scene.
 ///
 /// To create a Scene object, use a [SceneBuilder].
@@ -31,6 +34,8 @@ abstract class Scene {
   /// This can't be a leaf call because the native function calls Dart API
   /// (Dart_SetNativeInstanceField).
   void dispose();
+
+  Future<void> renderToSurface(RenderSurface renderSurface, {bool flipY = false});
 }
 
 @pragma('vm:entry-point')
@@ -84,6 +89,24 @@ base class _NativeScene extends NativeFieldWrapperClass1 implements Scene {
 
   @override
   String toString() => 'Scene';
+
+  @override
+  Future<void> renderToSurface(RenderSurface renderSurface, {bool flipY = false}) {
+    final Completer<void> completer = Completer<void>();
+
+    _renderToSurface(renderSurface, flipY, (bool result) {
+      if (result) {
+        completer.complete();
+      } else {
+        completer.completeError(RendererBackgroundException());
+      }
+    });
+
+    return completer.future;
+  }
+
+  @Native<Void Function(Pointer<Void>, Handle, Bool, Handle)>(symbol: 'Scene::renderToSurface')
+  external void _renderToSurface(RenderSurface renderSurface, bool flipY, _Callback<bool> callback);
 }
 
 // Lightweight wrapper of a native layer object.

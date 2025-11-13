@@ -102,6 +102,11 @@ class MockSnapshotDelegate : public SnapshotDelegate {
               (override));
   MOCK_METHOD(bool, MakeRenderContextCurrent, (), (override));
 
+  MOCK_METHOD(std::unique_ptr<GpuImageResult>, MakeSkiaGpuImageFromTexture, (int64_t, const DlISize&), (override));
+  MOCK_METHOD(sk_sp<DlImage>, MakeImpellerGpuImageFromTexture, (int64_t, const DlISize&), (override));
+  MOCK_METHOD(std::unique_ptr<Surface>, MakeOffscreenSurface, (int64_t, const DlISize&), (override));
+  MOCK_METHOD(bool, DrawLayerToSurface, (std::shared_ptr<flutter::LayerTree>, fml::RefPtr<RenderSurface>), (override));
+
   fml::TaskRunnerAffineWeakPtr<SnapshotDelegate> GetWeakPtr() {
     return weak_factory_.GetWeakPtr();
   }
