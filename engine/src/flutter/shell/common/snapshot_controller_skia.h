@@ -32,12 +32,36 @@ class SnapshotControllerSkia : public SnapshotController {
 
   bool MakeRenderContextCurrent() override;
 
+  sk_sp<DlImage> MakeFromTexture(int64_t raw_texture, DlISize size) override;
+
+  std::unique_ptr<Surface> MakeOffscreenSurface(int64_t raw_texture,
+                                                const DlISize& size) override;
+
  private:
   sk_sp<DlImage> DoMakeRasterSnapshot(
       DlISize size,
       std::function<void(SkCanvas*)> draw_callback);
 
   FML_DISALLOW_COPY_AND_ASSIGN(SnapshotControllerSkia);
+
+  class OffscreenSkiaSurface : public Surface {
+   public:
+    OffscreenSkiaSurface(sk_sp<SkSurface> surface, GrDirectContext* context);
+
+    ~OffscreenSkiaSurface() override;
+
+    bool IsValid() override;
+
+    std::unique_ptr<SurfaceFrame> AcquireFrame(const DlISize& size) override;
+
+    DlMatrix GetRootTransformation() const override;
+
+    GrDirectContext* GetContext() override;
+
+   private:
+    sk_sp<SkSurface> _surface;
+    GrDirectContext* _context;
+  };
 };
 
 }  // namespace flutter

@@ -194,6 +194,7 @@ class CanvasKitRenderer extends Renderer {
     int? targetWidth,
     int? targetHeight,
     bool allowUpscaling = true,
+    bool mipmapped = true,
   }) async => skiaInstantiateImageCodec(list, targetWidth, targetHeight, allowUpscaling);
 
   @override
@@ -453,5 +454,9 @@ class CanvasKitRenderer extends Renderer {
         i++;
       }
     }
+  }
+
+  ui.RenderSurface createRenderSurface(Object textureId, int width, int height) {
+    return CkRenderSurface(textureId, width, height);
   }
 }
